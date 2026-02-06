@@ -1,1 +1,137 @@
-<h1>Es lebt! Meine Seite ist online.</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Minimalist Architecture Portfolio">
+    <title>ARCH | Portfolio</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header id="header">
+        <div class="container header-content">
+            <a href="#" class="logo">ARCH.</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#work">Work</a></li>
+                    <li><a href="#studio">Studio</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <div class="burger">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero">
+            <div class="container">
+                <h1 class="fade-in">Form follows <br><em>fiction.</em></h1>
+                <p class="subtitle fade-in">Crafting spaces that tell stories. Residential & Commercial Architecture.</p>
+            </div>
+        </section>
+
+        <section id="work" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Selected Work</h2>
+                    <div class="separator"></div>
+                </div>
+                
+                <div class="project-grid">
+                    <!-- Project 1 -->
+                    <article class="project-card fade-up">
+                        <div class="image-wrapper">
+                            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1000&auto=format&fit=crop" alt="Modern House">
+                            <div class="overlay"></div>
+                        </div>
+                        <div class="project-info">
+                            <h3>The Glass House</h3>
+                            <p>Residential / 2024</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 2 -->
+                    <article class="project-card fade-up">
+                        <div class="image-wrapper">
+                            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1000&auto=format&fit=crop" alt="Concrete Museum">
+                            <div class="overlay"></div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Concrete Void</h3>
+                            <p>Cultural / 2023</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 3 -->
+                    <article class="project-card fade-up">
+                        <div class="image-wrapper">
+                            <img src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=1000&auto=format&fit=crop" alt="Minimalist Interior">
+                            <div class="overlay"></div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Light & Shadow</h3>
+                            <p>Interior / 2023</p>
+                        </div>
+                    </article>
+                     <!-- Project 4 -->
+                     <article class="project-card fade-up">
+                        <div class="image-wrapper">
+                            <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?q=80&w=1000&auto=format&fit=crop" alt="Urban Office">
+                            <div class="overlay"></div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Urban Vertex</h3>
+                            <p>Commercial / 2022</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="studio" class="section light-bg">
+            <div class="container split-layout">
+                <div class="text-block fade-in">
+                    <h2>The Studio</h2>
+                    <p>We are a multidisciplinary team composed of architects, designers, and urbanists. We believe in the power of simple lines and natural materials to creating lasting environments.</p>
+                    <a href="#contact" class="btn-link">Get in touch &rarr;</a>
+                </div>
+                <div class="image-block fade-in">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop" alt="Studio Office">
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section">
+            <div class="container footer-content">
+                <div class="contact-info">
+                    <h2>Let's build.</h2>
+                    <a href="mailto:hello@archstudio.com" class="email-link">hello@archstudio.com</a>
+                </div>
+                <div class="socials">
+                    <a href="#">Instagram</a>
+                    <a href="#">LinkedIn</a>
+                    <a href="#">Behance</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 ARCH Studio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
