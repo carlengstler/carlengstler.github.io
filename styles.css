@@ -36,6 +36,20 @@ img {
     height: 100%;
     object-fit: cover;
     display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+    /* Disables right click context menu effectively on some browsers, but also disables hover! */
+}
+
+/* Re-enable pointer events for project link areas if needed, but here images are decorative/content */
+.project img {
+    pointer-events: none;
+    /* Keep none to prevent drag */
+}
+
+.profile-block img {
+    pointer-events: none;
 }
 
 a {
@@ -48,101 +62,144 @@ a:hover {
     opacity: 0.7;
 }
 
-/* --- Vision Header (100vh) --- */
-.vision-header {
-    height: 100vh;
-    min-height: 700px;
-    /* Prevent crunching on short screens */
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 2rem 5vw;
-    box-sizing: border-box;
+/* --- Sticky Header --- */
+.sticky-nav {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--block-brown);
+    color: var(--bg-beige);
+    z-index: 1000;
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.header-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 5vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+}
+
+.sticky-nav nav {
+    display: flex;
     gap: 2rem;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+/* --- Vision Hero Section --- */
+.vision-hero {
+    /* Reduced height and padding to move content up */
+    min-height: 50vh;
+    padding: 2rem 5vw 3rem 5vw;
+    /* Reduced top padding */
+    display: flex;
+    align-items: center;
+    border-bottom: 4px solid var(--block-brown);
+    /* The requested separator line */
+    margin-bottom: 2rem;
+    /* Spacing before grid */
+}
+
+.hero-container {
     max-width: 1400px;
     margin: 0 auto;
     width: 100%;
-    align-items: start;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    /* Align tops */
+    gap: 4rem;
+}
+
+/* Left Side */
+.left-hero {
+    flex: 1;
 }
 
 .identity-block {
-    grid-column: 1;
-    grid-row: 1;
     border-bottom: 4px solid var(--accent-red);
     padding-bottom: 1rem;
+    margin-bottom: 3rem;
     display: inline-block;
+    width: 100%;
 }
 
 .logo {
-    font-size: clamp(3rem, 6vw, 5rem);
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    /* Slightly smaller than before */
     color: var(--accent-red);
     line-height: 0.9;
 }
 
 .role {
-    font-size: clamp(1.2rem, 2vw, 2rem);
-    color: var(--bg-beige);
-    /* Inverse styling idea from sketch? keeping brown for readability unless blocked */
+    font-size: clamp(1rem, 1.5vw, 1.5rem);
     color: var(--text-brown);
     font-weight: 300;
     margin-top: 0.5rem;
 }
 
+/* Aligned Bio Grid */
+.bio-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    /* Left | & | Right */
+    gap: 0 1rem;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    max-width: 600px;
+}
+
+.bio-left {
+    text-align: right;
+}
+
+.bio-center {
+    font-weight: 300;
+    color: var(--accent-red);
+    /* Optional pop of color for the & */
+}
+
+.bio-right {
+    text-align: left;
+}
+
+/* Right Side */
+.right-hero {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    /* Center text vertically relative to image if desired, or flex-start */
+    gap: 1.5rem;
+}
+
+.skills-text {
+    text-align: right;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
 .profile-block {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    justify-self: end;
     width: 300px;
     height: 350px;
     border: 8px solid var(--block-brown);
     background: var(--accent-olive);
-    /* Fallback */
+    flex-shrink: 0;
 }
 
-.bio-block {
-    grid-column: 1;
-    grid-row: 2;
-    font-size: 1.2rem;
-    font-weight: 600;
-    max-width: 400px;
-}
-
-.skills-block {
-    grid-column: 2;
-    /* Or adjust flow */
-    grid-row: 2;
-    text-align: right;
-    justify-self: end;
-    margin-top: 1rem;
-    /* Align with bottom of profile pic roughly */
-}
-
-.top-nav {
-    position: absolute;
-    top: 2rem;
-    right: 5vw;
-    font-family: var(--font-heading);
-    text-transform: uppercase;
-    display: flex;
-    gap: 2rem;
-    font-size: 1rem;
-}
-
-.brown-bar {
-    position: absolute;
-    bottom: 5vh;
-    left: 0;
-    width: 100%;
-    height: 20px;
-    background: var(--block-brown);
-}
 
 /* --- Work Grid (3x3 Layout) --- */
 .work-section {
@@ -236,32 +293,37 @@ a:hover {
 
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
-    .header-container {
-        grid-template-columns: 1fr;
+    .hero-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .right-hero {
+        flex-direction: column-reverse;
+        /* Text under image on mobile */
+        width: 100%;
         text-align: center;
     }
 
-    .identity-block {
-        grid-column: 1;
-        justify-self: center;
-    }
-
-    .profile-block {
-        grid-column: 1;
-        grid-row: 2;
-        justify-self: center;
-        width: 80%;
-        height: auto;
-        aspect-ratio: 1/1;
-    }
-
-    .bio-block,
-    .skills-block {
-        grid-column: 1;
-        grid-row: auto;
-        justify-self: center;
+    .skills-text {
         text-align: center;
     }
+
+    .bio-grid {
+        /* On mobile, maybe stack vertically or keep grid if fits? */
+        /* Let's keep it simple for now, maybe reduce gap */
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .bio-center {
+        display: none;
+    }
+
+    /* Hide the & separater structure for simple block text on mobile */
 
     .grid-container {
         grid-template-columns: 1fr;
