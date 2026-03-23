@@ -1,0 +1,112 @@
+[
+  {
+    "folder": "repurposed_mall",
+    "title": "Repurposed Mall Nürnberg",
+    "year": "2026",
+    "description": "A short paragraph describing the project — your words, your voice.",
+    "tags": ["adaptive reuse", "heritage"],
+    "order": 1,
+    "cover": "cover.jpg",
+    "hero": "hero.jpg",
+    "images": ["image-2.png", "image-3.png"]
+  },
+  {
+    "folder": "project_human centered design",
+    "title": "Green pathway through Valencia",
+    "year": "2025",
+    "description": "Human Centered Design",
+    "tags": ["adaptive reuse", "heritage"],
+    "order": 2,
+    "cover": "cover.png",
+    "hero": "hero.png",
+    "images": ["image-2.jpg", "image-3.jpg"]
+  },
+  {
+    "folder": "pension_potsdam",
+    "title": "Pension for sports on water in Potsdam",
+    "year": "2019",
+    "description": "A short paragraph describing the project — your words, your voice.",
+    "tags": ["adaptive reuse", "heritage"],
+    "order": 3,
+    "cover": "cover.png",
+    "hero": "hero.png",
+    "images": ["image-2.png", "image-3.png"]
+  },
+  {
+    "folder": "learning_valley",
+    "title": "Learning Valley for the University Hamburg",
+    "year": "2021",
+    "description": "A short paragraph describing the project — your words, your voice.",
+    "tags": ["adaptive reuse", "heritage"],
+    "order": 4,
+    "cover": "cover.png",
+    "hero": "hero.png",
+    "images": ["image-2.png", "image-3.png"]
+  },
+  {
+    "folder": "hotel_australia",
+    "title": "Hotel in the Deserts of Australia",
+    "year": "2020",
+    "description": "A short paragraph describing the project — your words, your voice.",
+    "tags": ["adaptive reuse", "heritage"],
+    "order": 5,
+    "cover": "cover.png",
+    "hero": "hero.png",
+    "images": ["image-2.png", "image-3.png"]
+  },
+  {
+    "folder": "cube_megaproject",
+    "title": "Cube Megaproject in Skopje",
+    "year": "2024",
+    "description": "A short paragraph describing the project — your words, your voice.",
+    "tags": ["adaptive reuse", "heritage"],
+    "order": 6,
+    "cover": "cover.png",
+    "hero": "hero.png",
+    "images": ["image-2.png", "image-3.png"]
+  },
+  {
+    "folder": "concert hall_regensburg",
+    "title": "Concert Hall Regensburg",
+    "year": "2022",
+    "description": "A short paragraph describing the project — your words, your voice.",
+    "tags": ["adaptive reuse", "heritage"],
+    "order": 7,
+    "cover": "cover.png",
+    "hero": "hero.png",
+    "images": ["image-2.png", "image-3.png"]
+  },
+  {
+    "folder": "boatschool_on_lake constance",
+    "title": "Paddling School at Lake Constance",
+    "year": "2025",
+    "description": "A short paragraph describing the project — your words, your voice.",
+    "tags": ["adaptive reuse", "heritage"],
+    "order": 8,
+    "cover": "cover.jpg",
+    "hero": "hero.jpg",
+    "images": ["image-2.jpg", "image-3.jpg"]
+  },
+  {
+    "folder": "architectural models",
+    "title": "Bachelor Degree Architectural Models",
+    "year": "2021",
+    "description": "A short paragraph describing the project — your words, your voice.",
+    "tags": ["adaptive reuse", "heritage"],
+    "order": 9,
+    "cover": "cover.png",
+    "hero": "hero.png",
+    "images": ["image-2.png", "image-3.png"]
+  },
+  {
+    "folder": "analysing_barcelona",
+    "title": "Analysing the City Shape of Barcelona",
+    "year": "2026",
+    "description": "A short paragraph describing the project — your words, your voice.",
+    "tags": ["adaptive reuse", "heritage"],
+    "order": 10,
+    "cover": "cover.png",
+    "hero": "hero.png",
+    "images": ["image-2.png", "image-3.png"]
+  }
+]
