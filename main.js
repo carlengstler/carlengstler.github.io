@@ -5,8 +5,168 @@
 (function () {
   'use strict';
 
+  // --- Stick Grid Background ---
+  var stickCanvas = document.getElementById('stickGrid');
+  if (stickCanvas) {
+    var ctx = stickCanvas.getContext('2d');
+    var stickSpacing = 32;
+    var stickWidth = 2;
+    var stickHeight = 18;
+    var stickColor = '#013030';
+    var stickOpacity = 0.6;
+    var cols = 0;
+    var rows = 0;
+    var stickAngles = [];
+    var animationPhase = 'wave-forward'; // wave-forward, hold-forward, wave-back, hold-back
+    var waveCol = 0;
+    var holdTimer = 0;
+    var colDelayMs = 60;
+    var singleRotMs = 800;
+    var holdForwardMs = 2000;
+    var holdBackMs = 3000;
+    var lastTime = 0;
+    var colTimers = [];
+
+    function initStickGrid() {
+      stickCanvas.width = window.innerWidth;
+      stickCanvas.height = window.innerHeight;
+      cols = Math.ceil(stickCanvas.width / stickSpacing) + 1;
+      rows = Math.ceil(stickCanvas.height / stickSpacing) + 1;
+      stickAngles = [];
+      colTimers = [];
+      for (var c = 0; c < cols; c++) {
+        stickAngles[c] = [];
+        colTimers[c] = 0;
+        for (var r = 0; r < rows; r++) {
+          stickAngles[c][r] = 0;
+        }
+      }
+      animationPhase = 'wave-forward';
+      waveCol = 0;
+      holdTimer = 0;
+    }
+
+    function easeInOut(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    function updateSticks(dt) {
+      if (animationPhase === 'wave-forward') {
+        holdTimer += dt;
+        while (waveCol < cols && holdTimer >= waveCol * colDelayMs) {
+          colTimers[waveCol] = holdTimer - waveCol * colDelayMs;
+          waveCol++;
+        }
+        for (var c = 0; c < waveCol; c++) {
+          colTimers[c] += dt;
+          var progress = Math.min(colTimers[c] / singleRotMs, 1);
+          var angle = easeInOut(progress) * 90;
+          for (var r = 0; r < rows; r++) {
+            stickAngles[c][r] = angle;
+          }
+        }
+        if (waveCol >= cols) {
+          var allDone = true;
+          for (var c2 = 0; c2 < cols; c2++) {
+            if (colTimers[c2] < singleRotMs) { allDone = false; break; }
+          }
+          if (allDone) {
+            animationPhase = 'hold-forward';
+            holdTimer = 0;
+          }
+        }
+      } else if (animationPhase === 'hold-forward') {
+        holdTimer += dt;
+        if (holdTimer >= holdForwardMs) {
+          animationPhase = 'wave-back';
+          waveCol = 0;
+          holdTimer = 0;
+          for (var c3 = 0; c3 < cols; c3++) {
+            colTimers[c3] = 0;
+          }
+        }
+      } else if (animationPhase === 'wave-back') {
+        holdTimer += dt;
+        while (waveCol < cols && holdTimer >= waveCol * colDelayMs) {
+          colTimers[waveCol] = holdTimer - waveCol * colDelayMs;
+          waveCol++;
+        }
+        for (var c4 = 0; c4 < waveCol; c4++) {
+          colTimers[c4] += dt;
+          var progress2 = Math.min(colTimers[c4] / singleRotMs, 1);
+          var angle2 = 90 - easeInOut(progress2) * 90;
+          for (var r2 = 0; r2 < rows; r2++) {
+            stickAngles[c4][r2] = angle2;
+          }
+        }
+        if (waveCol >= cols) {
+          var allDone2 = true;
+          for (var c5 = 0; c5 < cols; c5++) {
+            if (colTimers[c5] < singleRotMs) { allDone2 = false; break; }
+          }
+          if (allDone2) {
+            animationPhase = 'hold-back';
+            holdTimer = 0;
+          }
+        }
+      } else if (animationPhase === 'hold-back') {
+        holdTimer += dt;
+        if (holdTimer >= holdBackMs) {
+          animationPhase = 'wave-forward';
+          waveCol = 0;
+          holdTimer = 0;
+          for (var c6 = 0; c6 < cols; c6++) {
+            colTimers[c6] = 0;
+          }
+        }
+      }
+    }
+
+    function drawSticks() {
+      ctx.clearRect(0, 0, stickCanvas.width, stickCanvas.height);
+      ctx.globalAlpha = stickOpacity;
+      ctx.strokeStyle = stickColor;
+      ctx.lineWidth = stickWidth;
+      ctx.lineCap = 'round';
+
+      for (var c = 0; c < cols; c++) {
+        for (var r = 0; r < rows; r++) {
+          var cx = c * stickSpacing;
+          var cy = r * stickSpacing;
+          var angle = (stickAngles[c] && stickAngles[c][r]) || 0;
+          var rad = angle * Math.PI / 180;
+          var dx = Math.sin(rad) * stickHeight / 2;
+          var dy = Math.cos(rad) * stickHeight / 2;
+
+          ctx.beginPath();
+          ctx.moveTo(cx - dx, cy - dy);
+          ctx.lineTo(cx + dx, cy + dy);
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function animateSticks(timestamp) {
+      if (!lastTime) lastTime = timestamp;
+      var dt = timestamp - lastTime;
+      lastTime = timestamp;
+
+      updateSticks(dt);
+      drawSticks();
+      requestAnimationFrame(animateSticks);
+    }
+
+    initStickGrid();
+    requestAnimationFrame(animateSticks);
+
+    window.addEventListener('resize', function () {
+      initStickGrid();
+    });
+  }
+
   // --- Header scroll effect ---
-  const header = document.querySelector('.site-header');
+  var header = document.querySelector('.site-header');
   if (header) {
     window.addEventListener('scroll', function () {
       if (window.scrollY > 40) {
@@ -17,59 +177,107 @@
     });
   }
 
+  // --- Homepage: Load project preview bubbles ---
+  var bubbleB = document.querySelector('.bubble-b');
+  var bubbleC = document.querySelector('.bubble-c');
+  var bubbleD = document.querySelector('.bubble-d');
+
+  if (bubbleB && bubbleC && bubbleD) {
+    fetch('projects/projects.json')
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var sorted = data.sort(function (a, b) { return a.order - b.order; });
+        var bubbles = [
+          { el: bubbleB, index: 0 },
+          { el: bubbleC, index: 1 },
+          { el: bubbleD, index: 2 }
+        ];
+        bubbles.forEach(function (b) {
+          if (sorted[b.index]) {
+            var project = sorted[b.index];
+            var img = b.el.querySelector('.bubble-thumb');
+            var label = b.el.querySelector('.bubble-label');
+            img.src = 'projects/' + encodeURIComponent(project.folder) + '/' + project.cover;
+            img.alt = project.title + ' preview';
+            label.textContent = project.title;
+          }
+        });
+      });
+  }
+
   // --- Contact form mailto ---
-  const contactForm = document.getElementById('contactForm');
+  var contactForm = document.getElementById('contactForm');
   if (contactForm) {
     contactForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      const email = contactForm.querySelector('[name="email"]').value;
-      const subject = contactForm.querySelector('[name="subject"]').value;
-      const message = contactForm.querySelector('[name="message"]').value;
-      const mailSubject = encodeURIComponent('WEBSITE — ' + subject + ' — by ' + email);
-      const mailBody = encodeURIComponent(message);
+      var email = contactForm.querySelector('[name="email"]').value;
+      var subject = contactForm.querySelector('[name="subject"]').value;
+      var message = contactForm.querySelector('[name="message"]').value;
+      var mailSubject = encodeURIComponent('WEBSITE — ' + subject + ' — by ' + email);
+      var mailBody = encodeURIComponent(message);
       window.location.href = 'mailto:carl.engstler@gmail.com?subject=' + mailSubject + '&body=' + mailBody;
     });
   }
 
   // --- Projects page logic ---
-  const projectsContainer = document.querySelector('.projects-container');
+  var projectsContainer = document.querySelector('.projects-container');
   if (!projectsContainer) return;
 
-  let allProjects = [];
-  let selectedProjectId = null;
-  let currentView = 'wheel'; // 'wheel' or 'grid'
-  let mouseOnLeft = true;
+  var allProjects = [];
+  var selectedProjectId = null;
+  var currentView = 'wheel'; // 'wheel' or 'grid'
+  var mouseOnLeft = true;
+  var isTransitioning = false; // BUG 1 fix: prevent rapid switching
 
-  const scrollWheels = document.getElementById('scrollWheels');
-  const scrollColLeft = document.getElementById('scrollColLeft');
-  const scrollColRight = document.getElementById('scrollColRight');
-  const projectsGrid = document.getElementById('projectsGrid');
-  const projectDetail = document.getElementById('projectDetail');
-  const projectsRight = document.getElementById('projectsRight');
-  const viewToggleBtn = document.getElementById('viewToggleBtn');
+  var scrollWheels = document.getElementById('scrollWheels');
+  var scrollColLeft = document.getElementById('scrollColLeft');
+  var scrollColRight = document.getElementById('scrollColRight');
+  var projectsGrid = document.getElementById('projectsGrid');
+  var projectDetail = document.getElementById('projectDetail');
+  var projectsRight = document.getElementById('projectsRight');
+  var viewToggleBtn = document.getElementById('viewToggleBtn');
+  var isMobile = window.innerWidth <= 768;
+
+  window.addEventListener('resize', function () {
+    isMobile = window.innerWidth <= 768;
+  });
 
   // Track mouse position for scroll zone detection
   document.addEventListener('mousemove', function (e) {
-    const threshold = window.innerWidth * 0.4444;
+    var threshold = window.innerWidth * 0.4444;
     mouseOnLeft = e.clientX < threshold;
   });
 
-  // Scroll handling: only scroll the active side
+  // Scroll handling — BUG 2 fix: when no project selected, full viewport scrolls wheels
   projectsContainer.addEventListener('wheel', function (e) {
-    if (window.innerWidth <= 768) return; // Let mobile scroll naturally
+    if (isMobile) return;
 
-    if (mouseOnLeft && currentView === 'wheel') {
-      e.preventDefault();
-      // Left column scrolls inverted, right column scrolls normally
-      scrollColLeft.scrollTop -= e.deltaY;
-      scrollColRight.scrollTop += e.deltaY;
-      updateCardOpacities();
-    } else if (mouseOnLeft && currentView === 'grid') {
-      e.preventDefault();
-      projectsGrid.scrollTop += e.deltaY;
-    } else if (!mouseOnLeft && selectedProjectId !== null) {
-      e.preventDefault();
-      projectsRight.scrollTop += e.deltaY;
+    if (currentView === 'wheel') {
+      if (selectedProjectId === null) {
+        // No project selected — full viewport scrolls the wheels
+        e.preventDefault();
+        scrollColLeft.scrollTop -= e.deltaY;
+        scrollColRight.scrollTop += e.deltaY;
+        updateCardOpacities();
+      } else if (mouseOnLeft) {
+        // Project selected, cursor on left — scroll wheels
+        e.preventDefault();
+        scrollColLeft.scrollTop -= e.deltaY;
+        scrollColRight.scrollTop += e.deltaY;
+        updateCardOpacities();
+      } else {
+        // Project selected, cursor on right — scroll detail
+        e.preventDefault();
+        projectsRight.scrollTop += e.deltaY;
+      }
+    } else if (currentView === 'grid') {
+      if (mouseOnLeft) {
+        e.preventDefault();
+        projectsGrid.scrollTop += e.deltaY;
+      } else if (selectedProjectId !== null) {
+        e.preventDefault();
+        projectsRight.scrollTop += e.deltaY;
+      }
     }
   }, { passive: false });
 
@@ -81,11 +289,22 @@
       renderWheelView();
       renderGridView();
 
-      // Initial center after a short delay for layout
       requestAnimationFrame(function () {
         centerScrollColumns();
         updateCardOpacities();
       });
+
+      // Check for ?project=N query parameter
+      var urlParams = new URLSearchParams(window.location.search);
+      var projectParam = urlParams.get('project');
+      if (projectParam) {
+        var projectId = parseInt(projectParam);
+        if (!isNaN(projectId)) {
+          setTimeout(function () {
+            handleProjectClick(projectId);
+          }, 300);
+        }
+      }
     });
 
   // Render scroll wheel view
@@ -165,19 +384,29 @@
     });
   }
 
-  // Handle project selection
+  // Handle project selection — BUG 1 fix: guard against rapid clicks
   function handleProjectClick(projectId) {
+    if (isTransitioning) return;
+
     if (selectedProjectId === projectId) {
-      // Deselect
       deselectProject();
       return;
+    }
+
+    // If another project was selected, immediately replace (no close animation)
+    if (selectedProjectId !== null) {
+      projectDetail.classList.remove('active', 'closing');
     }
 
     selectedProjectId = projectId;
     var project = allProjects.find(function (p) { return p.order === projectId; });
     if (!project) return;
 
-    showProjectDetail(project);
+    if (isMobile) {
+      showMobilePopup(project);
+    } else {
+      showProjectDetail(project);
+    }
     updateDimming();
   }
 
@@ -186,12 +415,12 @@
     var folderPath = 'projects/' + encodeURIComponent(project.folder) + '/';
 
     var html = '';
-    html += '<img class="detail-hero" src="' + folderPath + project.hero + '" alt="' + project.title + ' hero image">';
-    html += '<h2>' + project.title + '</h2>';
-    html += '<p class="detail-description">' + project.description + '</p>';
+    html += '<img class="detail-hero" src="' + folderPath + project.hero + '" alt="' + escapeHtml(project.title) + ' hero image">';
+    html += '<h2>' + escapeHtml(project.title) + '</h2>';
+    html += '<p class="detail-description">' + escapeHtml(project.description) + '</p>';
     html += '<div class="detail-images">';
     project.images.forEach(function (imgFile) {
-      html += '<img src="' + folderPath + imgFile + '" alt="' + project.title + '" loading="lazy">';
+      html += '<img src="' + folderPath + imgFile + '" alt="' + escapeHtml(project.title) + '" loading="lazy">';
     });
     html += '</div>';
 
@@ -200,16 +429,20 @@
     projectsRight.scrollTop = 0;
   }
 
-  // Deselect project
+  // Deselect project — BUG 1 fix: use transition guard
   function deselectProject() {
+    if (isTransitioning) return;
+    isTransitioning = true;
+
     projectDetail.classList.remove('active');
     projectDetail.classList.add('closing');
 
     setTimeout(function () {
       projectDetail.classList.remove('closing');
       projectDetail.innerHTML = '';
-      projectDetail.style.display = 'none';
+      projectDetail.style.display = '';
       selectedProjectId = null;
+      isTransitioning = false;
       updateDimming();
     }, 350);
   }
@@ -222,6 +455,8 @@
       card.classList.remove('dimmed', 'selected');
 
       if (selectedProjectId !== null) {
+        // Clear inline opacity set by scroll proximity so CSS classes take effect
+        card.style.opacity = '';
         if (id === selectedProjectId) {
           card.classList.add('selected');
         } else {
@@ -241,7 +476,7 @@
 
       var cards = col.querySelectorAll('.project-card');
       cards.forEach(function (card) {
-        if (selectedProjectId !== null) return; // Dimming takes priority
+        if (selectedProjectId !== null) return;
         var cardRect = card.getBoundingClientRect();
         var cardCenter = cardRect.top + cardRect.height / 2;
         var distance = Math.abs(colCenter - cardCenter);
@@ -271,31 +506,96 @@
   // View toggle with cross-fade
   viewToggleBtn.addEventListener('click', function () {
     if (currentView === 'wheel') {
-      // Fade out wheels
       scrollWheels.classList.add('fade-out');
       setTimeout(function () {
         currentView = 'grid';
         scrollWheels.style.display = 'none';
         scrollWheels.classList.remove('fade-out');
-        // Show grid with fade-in
-        projectsGrid.classList.add('active');
+        // Show grid: set display first, then fade in opacity on next frame
+        projectsGrid.style.display = 'grid';
+        projectsGrid.style.opacity = '0';
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            projectsGrid.classList.add('active');
+          });
+        });
         viewToggleBtn.textContent = 'VIEW WHEEL';
       }, 400);
     } else {
-      // Fade out grid
-      projectsGrid.style.opacity = '0';
+      projectsGrid.classList.remove('active');
       setTimeout(function () {
         currentView = 'wheel';
-        projectsGrid.classList.remove('active');
+        projectsGrid.style.display = 'none';
         projectsGrid.style.opacity = '';
-        // Show wheels with fade-in
         scrollWheels.style.display = 'flex';
-        viewToggleBtn.textContent = 'VIEW ALL';
+        viewToggleBtn.textContent = 'VIEW GRID';
         requestAnimationFrame(function () {
           updateCardOpacities();
         });
       }, 400);
     }
   });
+
+  // --- Mobile project popup ---
+  function showMobilePopup(project) {
+    var existing = document.querySelector('.mobile-popup-overlay');
+    if (existing) existing.remove();
+
+    var folderPath = 'projects/' + encodeURIComponent(project.folder) + '/';
+
+    var overlay = document.createElement('div');
+    overlay.className = 'mobile-popup-overlay';
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'mobile-popup-close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.setAttribute('aria-label', 'Close');
+
+    var content = document.createElement('div');
+    content.className = 'mobile-popup-content';
+
+    var html = '';
+    html += '<img class="detail-hero" src="' + folderPath + project.hero + '" alt="' + escapeHtml(project.title) + ' hero image">';
+    html += '<h2>' + escapeHtml(project.title) + '</h2>';
+    html += '<p class="detail-description">' + escapeHtml(project.description) + '</p>';
+    html += '<div class="detail-images">';
+    project.images.forEach(function (imgFile) {
+      html += '<img src="' + folderPath + imgFile + '" alt="' + escapeHtml(project.title) + '" loading="lazy">';
+    });
+    html += '</div>';
+
+    content.innerHTML = html;
+    overlay.appendChild(closeBtn);
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
+    document.body.classList.add('popup-open');
+
+    requestAnimationFrame(function () {
+      overlay.classList.add('open');
+    });
+
+    closeBtn.addEventListener('click', function () {
+      closeMobilePopup(overlay);
+    });
+  }
+
+  function closeMobilePopup(overlay) {
+    overlay.classList.remove('open');
+    overlay.classList.add('closing');
+    document.body.classList.remove('popup-open');
+    selectedProjectId = null;
+    updateDimming();
+
+    setTimeout(function () {
+      overlay.remove();
+    }, 400);
+  }
+
+  // Helper: escape HTML to prevent XSS
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
 
 })();
