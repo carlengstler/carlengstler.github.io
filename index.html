@@ -24,41 +24,72 @@
     </nav>
   </header>
 
+  <!-- SVG clip paths for home page -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <!-- Main blob: wide organic shape, wider on right -->
+      <clipPath id="bubbleAClip" clipPathUnits="objectBoundingBox">
+        <path d="
+          M 0.08 0.22
+          C 0.06 0.08, 0.22 0.00, 0.38 0.05
+          C 0.50 0.09, 0.56 0.02, 0.68 0.05
+          C 0.82 0.08, 0.94 0.20, 0.99 0.36
+          C 1.04 0.52, 0.99 0.70, 0.92 0.80
+          C 0.85 0.90, 0.72 0.98, 0.56 0.98
+          C 0.40 0.98, 0.26 0.94, 0.16 0.86
+          C 0.06 0.78, -0.01 0.62, 0.00 0.46
+          C 0.01 0.34, 0.04 0.28, 0.08 0.22
+          Z" />
+      </clipPath>
+      <!-- Photo cloud: organic rounded rectangle -->
+      <clipPath id="photoClip" clipPathUnits="objectBoundingBox">
+        <path d="
+          M 0.12 0.08
+          C 0.30 -0.04, 0.70 -0.04, 0.88 0.08
+          C 1.02 0.20, 1.04 0.42, 1.00 0.60
+          C 0.96 0.78, 0.90 0.94, 0.78 1.00
+          C 0.62 1.06, 0.38 1.06, 0.22 1.00
+          C 0.08 0.92, 0.00 0.76, 0.00 0.58
+          C 0.00 0.38, -0.02 0.18, 0.12 0.08
+          Z" />
+      </clipPath>
+    </defs>
+  </svg>
+
   <!-- Main Content -->
   <main class="page-content">
     <section class="home-hero">
-      <!-- Project Preview Bubbles -->
+      <!-- Project Preview Bubbles — above main blob -->
       <div class="bubble-cluster">
         <a href="projects.html?project=1" class="bubble bubble-b" aria-label="Project 1">
           <img src="" alt="Project preview" class="bubble-thumb">
-          <span class="bubble-label"></span>
         </a>
         <a href="projects.html?project=2" class="bubble bubble-c" aria-label="Project 2">
           <img src="" alt="Project preview" class="bubble-thumb">
-          <span class="bubble-label"></span>
         </a>
         <a href="projects.html?project=3" class="bubble bubble-d" aria-label="Project 3">
           <img src="" alt="Project preview" class="bubble-thumb">
-          <span class="bubble-label"></span>
         </a>
       </div>
 
-      <!-- Main Bubble A -->
+      <!-- Main Bubble A — horizontal: photo left, text+socials right -->
       <div class="bubble bubble-a">
         <div class="home-photo">
           <img src="assets/images/carl.jpg" alt="Carl Engstler portrait">
         </div>
-        <p class="home-tagline">Architectural master student. Designer. AI-integrated workflows. Get an impression of my work, who I am and what I can offer you. Dive in and lets collaborate!</p>
-        <div class="social-links">
-          <a href="https://www.instagram.com/carlengstler/" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
-          </a>
-          <a href="https://www.linkedin.com/in/carl-engstler-890099235/" target="_blank" rel="noopener" aria-label="LinkedIn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          </a>
-          <a href="https://www.tiktok.com/@carl.eng" target="_blank" rel="noopener" aria-label="TikTok">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V9.11a8.16 8.16 0 004.76 1.52v-3.4a4.85 4.85 0 01-1-.54z"/></svg>
-          </a>
+        <div class="home-content">
+          <p class="home-tagline">Architectural master student. Designer. AI-integrated workflows. Get an impression of my work, who I am and what I can offer you. Dive in and lets collaborate!</p>
+          <div class="social-links">
+            <a href="https://www.instagram.com/carlengstler/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/carl-engstler-890099235/" target="_blank" rel="noopener" aria-label="LinkedIn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@carl.eng" target="_blank" rel="noopener" aria-label="TikTok">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V9.11a8.16 8.16 0 004.76 1.52v-3.4a4.85 4.85 0 01-1-.54z"/></svg>
+            </a>
+          </div>
         </div>
       </div>
     </section>

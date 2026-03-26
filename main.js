@@ -10,7 +10,7 @@
   if (stickCanvas) {
     var ctx = stickCanvas.getContext('2d');
     var stickSpacing = 32;
-    var stickWidth = 2;
+    var stickWidth = 2.5;
     var stickHeight = 18;
     var stickColor = '#013030';
     var stickOpacity = 0.6;
@@ -196,10 +196,8 @@
           if (sorted[b.index]) {
             var project = sorted[b.index];
             var img = b.el.querySelector('.bubble-thumb');
-            var label = b.el.querySelector('.bubble-label');
             img.src = 'projects/' + encodeURIComponent(project.folder) + '/' + project.cover;
             img.alt = project.title + ' preview';
-            label.textContent = project.title;
           }
         });
       });
@@ -512,8 +510,8 @@
         scrollWheels.style.display = 'none';
         scrollWheels.classList.remove('fade-out');
         // Show grid: set display first, then fade in opacity on next frame
+        projectsGrid.classList.remove('active');
         projectsGrid.style.display = 'grid';
-        projectsGrid.style.opacity = '0';
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
             projectsGrid.classList.add('active');
