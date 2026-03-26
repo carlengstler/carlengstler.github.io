@@ -131,7 +131,7 @@
 
       for (var c = 0; c < cols; c++) {
         for (var r = 0; r < rows; r++) {
-          var cx = c * stickSpacing;
+          var cx = c * stickSpacing + (r % 2 === 1 ? stickSpacing / 2 : 0);
           var cy = r * stickSpacing;
           var angle = (stickAngles[c] && stickAngles[c][r]) || 0;
           var rad = angle * Math.PI / 180;
