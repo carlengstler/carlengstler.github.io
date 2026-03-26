@@ -10,7 +10,7 @@
   if (stickCanvas) {
     var ctx = stickCanvas.getContext('2d');
     var stickSpacing = 32;
-    var stickWidth = 2.5;
+    var stickWidth = 3.75;
     var stickHeight = 18;
     var stickColor = '#013030';
     var stickOpacity = 0.6;
