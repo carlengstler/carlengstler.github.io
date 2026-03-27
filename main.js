@@ -17,7 +17,7 @@
     var cols = 0;
     var rows = 0;
     var stickAngles = [];
-    var animationPhase = 'wave-forward'; // wave-forward, hold-forward, wave-back, hold-back
+    var animationPhase = 'wave-forward'; // wave-forward, hold-forward, wave-back, hold-back, done
     var waveCol = 0;
     var holdTimer = 0;
     var colDelayMs = 60;
@@ -26,7 +26,7 @@
     var holdBackMs = 3000;
     var lastTime = 0;
     var colTimers = [];
-    var needsRedraw = true;
+    var needsRedraw = true; // FIX 2: only redraw when angles change
 
     function initStickGrid() {
       stickCanvas.width = window.innerWidth;
@@ -45,6 +45,7 @@
       animationPhase = 'wave-forward';
       waveCol = 0;
       holdTimer = 0;
+      needsRedraw = true;
     }
 
     function easeInOut(t) {
@@ -52,7 +53,8 @@
     }
 
     function updateSticks(dt) {
-      needsRedraw = false;
+      needsRedraw = false; // FIX 2: assume no redraw needed unless angles change
+
       if (animationPhase === 'wave-forward') {
         holdTimer += dt;
         while (waveCol < cols && holdTimer >= waveCol * colDelayMs) {
@@ -67,7 +69,7 @@
             stickAngles[c][r] = angle;
           }
         }
-        needsRedraw = true;
+        needsRedraw = true; // FIX 2: angles changed
         if (waveCol >= cols) {
           var allDone = true;
           for (var c2 = 0; c2 < cols; c2++) {
@@ -102,7 +104,7 @@
             stickAngles[c4][r2] = angle2;
           }
         }
-	needsRedraw = true;
+        needsRedraw = true; // FIX 2: angles changed
         if (waveCol >= cols) {
           var allDone2 = true;
           for (var c5 = 0; c5 < cols; c5++) {
@@ -116,12 +118,12 @@
       } else if (animationPhase === 'hold-back') {
         holdTimer += dt;
         if (holdTimer >= holdBackMs) {
-          animationPhase = 'done';
-          }
+          animationPhase = 'done'; // FIX 3: stop after one full cycle
         }
       }
     }
 
+    // FIX 1: batched draw — one beginPath + one stroke instead of ~2100
     function drawSticks() {
       ctx.clearRect(0, 0, stickCanvas.width, stickCanvas.height);
       ctx.globalAlpha = stickOpacity;
@@ -129,34 +131,21 @@
       ctx.lineWidth = stickWidth;
       ctx.lineCap = 'round';
 
-     ctx.beginPath();
-
+      ctx.beginPath(); // FIX 1: single beginPath before the loop
       for (var c = 0; c < cols; c++) {
-
         for (var r = 0; r < rows; r++) {
-
           var cx = c * stickSpacing + (r % 2 === 1 ? stickSpacing / 2 : 0);
-
           var cy = r * stickSpacing;
-
           var angle = (stickAngles[c] && stickAngles[c][r]) || 0;
-
           var rad = angle * Math.PI / 180;
-
           var dx = Math.sin(rad) * stickHeight / 2;
-
           var dy = Math.cos(rad) * stickHeight / 2;
 
-
           ctx.moveTo(cx - dx, cy - dy);
-
           ctx.lineTo(cx + dx, cy + dy);
-
         }
-
       }
-
-      ctx.stroke();
+      ctx.stroke(); // FIX 1: single stroke after the loop
       ctx.globalAlpha = 1;
     }
 
@@ -166,8 +155,8 @@
       lastTime = timestamp;
 
       updateSticks(dt);
-      drawSticks();
-      if (needsRedraw) drawSticks();
+      if (needsRedraw) drawSticks(); // FIX 2: only draw when something changed
+      // FIX 3: stop the loop when animation is done
       if (animationPhase !== 'done') {
         requestAnimationFrame(animateSticks);
       }
@@ -178,6 +167,11 @@
 
     window.addEventListener('resize', function () {
       initStickGrid();
+      // Restart animation loop if it had stopped
+      if (animationPhase === 'wave-forward') {
+        lastTime = 0;
+        requestAnimationFrame(animateSticks);
+      }
     });
   }
 
@@ -272,13 +266,13 @@
         e.preventDefault();
         scrollColLeft.scrollTop -= e.deltaY;
         scrollColRight.scrollTop += e.deltaY;
-        updateCardOpacities();
+        scheduleOpacityUpdate(); // FIX 6: debounced
       } else if (mouseOnLeft) {
         // Project selected, cursor on left — scroll wheels
         e.preventDefault();
         scrollColLeft.scrollTop -= e.deltaY;
         scrollColRight.scrollTop += e.deltaY;
-        updateCardOpacities();
+        scheduleOpacityUpdate(); // FIX 6: debounced
       } else {
         // Project selected, cursor on right — scroll detail
         e.preventDefault();
@@ -504,6 +498,17 @@
     });
   }
 
+  // FIX 6: debounce opacity updates to once per frame
+  var opacityRafPending = false;
+  function scheduleOpacityUpdate() {
+    if (opacityRafPending) return;
+    opacityRafPending = true;
+    requestAnimationFrame(function () {
+      opacityRafPending = false;
+      updateCardOpacities();
+    });
+  }
+
   // Center scroll columns initially
   function centerScrollColumns() {
     [scrollColLeft, scrollColRight].forEach(function (col) {
@@ -514,8 +519,8 @@
   }
 
   // Listen for scroll on columns to update opacities
-  scrollColLeft.addEventListener('scroll', updateCardOpacities);
-  scrollColRight.addEventListener('scroll', updateCardOpacities);
+  scrollColLeft.addEventListener('scroll', scheduleOpacityUpdate); // FIX 6: debounced
+  scrollColRight.addEventListener('scroll', scheduleOpacityUpdate); // FIX 6: debounced
 
   // View toggle with cross-fade
   viewToggleBtn.addEventListener('click', function () {
