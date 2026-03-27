@@ -26,6 +26,7 @@
     var holdBackMs = 3000;
     var lastTime = 0;
     var colTimers = [];
+    var needsRedraw = true;
 
     function initStickGrid() {
       stickCanvas.width = window.innerWidth;
@@ -51,6 +52,7 @@
     }
 
     function updateSticks(dt) {
+      needsRedraw = false;
       if (animationPhase === 'wave-forward') {
         holdTimer += dt;
         while (waveCol < cols && holdTimer >= waveCol * colDelayMs) {
@@ -65,6 +67,7 @@
             stickAngles[c][r] = angle;
           }
         }
+        needsRedraw = true;
         if (waveCol >= cols) {
           var allDone = true;
           for (var c2 = 0; c2 < cols; c2++) {
@@ -99,6 +102,7 @@
             stickAngles[c4][r2] = angle2;
           }
         }
+	needsRedraw = true;
         if (waveCol >= cols) {
           var allDone2 = true;
           for (var c5 = 0; c5 < cols; c5++) {
@@ -112,11 +116,7 @@
       } else if (animationPhase === 'hold-back') {
         holdTimer += dt;
         if (holdTimer >= holdBackMs) {
-          animationPhase = 'wave-forward';
-          waveCol = 0;
-          holdTimer = 0;
-          for (var c6 = 0; c6 < cols; c6++) {
-            colTimers[c6] = 0;
+          animationPhase = 'done';
           }
         }
       }
@@ -129,21 +129,34 @@
       ctx.lineWidth = stickWidth;
       ctx.lineCap = 'round';
 
+     ctx.beginPath();
+
       for (var c = 0; c < cols; c++) {
+
         for (var r = 0; r < rows; r++) {
+
           var cx = c * stickSpacing + (r % 2 === 1 ? stickSpacing / 2 : 0);
+
           var cy = r * stickSpacing;
+
           var angle = (stickAngles[c] && stickAngles[c][r]) || 0;
+
           var rad = angle * Math.PI / 180;
+
           var dx = Math.sin(rad) * stickHeight / 2;
+
           var dy = Math.cos(rad) * stickHeight / 2;
 
-          ctx.beginPath();
+
           ctx.moveTo(cx - dx, cy - dy);
+
           ctx.lineTo(cx + dx, cy + dy);
-          ctx.stroke();
+
         }
+
       }
+
+      ctx.stroke();
       ctx.globalAlpha = 1;
     }
 
@@ -154,7 +167,10 @@
 
       updateSticks(dt);
       drawSticks();
-      requestAnimationFrame(animateSticks);
+      if (needsRedraw) drawSticks();
+      if (animationPhase !== 'done') {
+        requestAnimationFrame(animateSticks);
+      }
     }
 
     initStickGrid();
