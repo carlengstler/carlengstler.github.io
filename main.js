@@ -618,3 +618,172 @@
   }
 
 })();
+
+/* ========================================
+   Questionnaire Modal
+   ======================================== */
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'ce_questionnaire_submitted';
+  var EMAIL_TO = 'carl.engstler@gmail.com';
+
+  var questions = [
+    'Does the visual presentation match what you\'d expect from an architect? (1-5)',
+    'Does the website feel consistent in style and tone throughout? (1-5)',
+    'Does the layout make it easy to find information without getting lost? (1-5)',
+    'Does the website feel like it reflects a personal identity or does it feel generic? (1-5)',
+    'Would you say this website looks professionally made? (1-5)'
+  ];
+
+  var btn = document.getElementById('questionnaire-btn');
+  if (!btn) return;
+
+  btn.addEventListener('click', openQuestionnaire);
+
+  function openQuestionnaire() {
+    // Remove any existing modal
+    var existing = document.querySelector('.questionnaire-overlay');
+    if (existing) existing.remove();
+
+    var overlay = document.createElement('div');
+    overlay.className = 'questionnaire-overlay';
+
+    var modal = document.createElement('div');
+    modal.className = 'questionnaire-modal';
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'questionnaire-close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.setAttribute('aria-label', 'Close questionnaire');
+    modal.appendChild(closeBtn);
+
+    var title = document.createElement('h2');
+    title.textContent = 'Questionnaire';
+    modal.appendChild(title);
+
+    // Check if already submitted
+    if (localStorage.getItem(STORAGE_KEY)) {
+      var msg = document.createElement('p');
+      msg.className = 'q-submitted-msg';
+      msg.textContent = 'Thank you! You have already submitted your feedback.';
+      modal.appendChild(msg);
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+      requestAnimationFrame(function () { overlay.classList.add('open'); });
+      closeBtn.addEventListener('click', function () { closeModal(overlay); });
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeModal(overlay);
+      });
+      return;
+    }
+
+    var answers = [0, 0, 0, 0, 0];
+
+    // Rating questions
+    questions.forEach(function (qText, qi) {
+      var block = document.createElement('div');
+      block.className = 'q-block';
+
+      var label = document.createElement('p');
+      label.textContent = qText;
+      block.appendChild(label);
+
+      var row = document.createElement('div');
+      row.className = 'q-ratings';
+
+      for (var n = 1; n <= 5; n++) {
+        (function (num) {
+          var b = document.createElement('button');
+          b.className = 'q-rating-btn';
+          b.type = 'button';
+          b.textContent = num;
+          b.addEventListener('click', function () {
+            // Toggle: if already selected, deselect
+            if (answers[qi] === num) {
+              answers[qi] = 0;
+              b.classList.remove('selected');
+            } else {
+              // Deselect siblings
+              var siblings = row.querySelectorAll('.q-rating-btn');
+              siblings.forEach(function (s) { s.classList.remove('selected'); });
+              answers[qi] = num;
+              b.classList.add('selected');
+            }
+          });
+          row.appendChild(b);
+        })(n);
+      }
+
+      block.appendChild(row);
+      modal.appendChild(block);
+    });
+
+    // Open text question
+    var textBlock = document.createElement('div');
+    textBlock.className = 'q-block';
+    var textLabel = document.createElement('p');
+    textLabel.textContent = 'What would you improve?';
+    textBlock.appendChild(textLabel);
+
+    var textarea = document.createElement('textarea');
+    textarea.className = 'q-textarea';
+    textarea.placeholder = '(Optional)';
+    textBlock.appendChild(textarea);
+    modal.appendChild(textBlock);
+
+    // Send button
+    var sendBtn = document.createElement('button');
+    sendBtn.className = 'q-send-btn';
+    sendBtn.type = 'button';
+    sendBtn.textContent = 'SEND';
+    modal.appendChild(sendBtn);
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    requestAnimationFrame(function () { overlay.classList.add('open'); });
+
+    // Close handlers
+    closeBtn.addEventListener('click', function () { closeModal(overlay); });
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeModal(overlay);
+    });
+
+    // Send handler
+    sendBtn.addEventListener('click', function () {
+      // Build email body
+      var body = 'Website Questionnaire Results\n\n';
+      questions.forEach(function (q, i) {
+        body += 'Q' + (i + 1) + ': ' + q + '\n';
+        body += 'Answer: ' + (answers[i] > 0 ? answers[i] + '/5' : 'Not answered') + '\n\n';
+      });
+      body += 'Q6: What would you improve?\n';
+      body += 'Answer: ' + (textarea.value.trim() || 'No response') + '\n';
+
+      var subject = 'WEBSITE — Questionnaire Response';
+      var mailto = 'mailto:' + EMAIL_TO
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(body);
+
+      // Mark as submitted
+      localStorage.setItem(STORAGE_KEY, 'true');
+
+      // Open mail client
+      window.location.href = mailto;
+
+      // Show thank you
+      modal.innerHTML = '';
+      modal.appendChild(closeBtn);
+      var thanks = document.createElement('p');
+      thanks.className = 'q-submitted-msg';
+      thanks.textContent = 'Thank you for your feedback!';
+      modal.appendChild(thanks);
+    });
+  }
+
+  function closeModal(overlay) {
+    overlay.classList.remove('open');
+    setTimeout(function () { overlay.remove(); }, 400);
+  }
+})();
