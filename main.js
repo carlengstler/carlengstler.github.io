@@ -629,11 +629,11 @@
   var EMAIL_TO = 'carl.engstler@gmail.com';
 
   var questions = [
-    'Does the visual presentation match what you\'d expect from an architect? (1-5)',
-    'Does the website feel consistent in style and tone throughout? (1-5)',
-    'Does the layout make it easy to find information without getting lost? (1-5)',
-    'Does the website feel like it reflects a personal identity or does it feel generic? (1-5)',
-    'Would you say this website looks professionally made? (1-5)'
+    'Does the visual presentation match what you\'d expect from an architect?',
+    'Does the website feel consistent in style and tone throughout?',
+    'Does the layout make it easy to find information without getting lost?',
+    'Does the website feel like it reflects a personal identity or does it feel generic?',
+    'Would you say this website looks professionally made?'
   ];
 
   var btn = document.getElementById('questionnaire-btn');
@@ -723,7 +723,7 @@
     var textBlock = document.createElement('div');
     textBlock.className = 'q-block';
     var textLabel = document.createElement('p');
-    textLabel.textContent = 'What would you improve?';
+    textLabel.textContent = 'What about the website specifically did you like or dislike?';
     textBlock.appendChild(textLabel);
 
     var textarea = document.createElement('textarea');
@@ -758,7 +758,7 @@
         body += 'Q' + (i + 1) + ': ' + q + '\n';
         body += 'Answer: ' + (answers[i] > 0 ? answers[i] + '/5' : 'Not answered') + '\n\n';
       });
-      body += 'Q6: What would you improve?\n';
+      body += 'Q6: What about the website specifically did you like or dislike?\n';
       body += 'Answer: ' + (textarea.value.trim() || 'No response') + '\n';
 
       var subject = 'WEBSITE — Questionnaire Response';
