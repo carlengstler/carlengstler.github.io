@@ -752,7 +752,7 @@
 
     // Send handler
     sendBtn.addEventListener('click', function () {
-      // Build email body
+      // Build message body
       var body = 'Website Questionnaire Results\n\n';
       questions.forEach(function (q, i) {
         body += 'Q' + (i + 1) + ': ' + q + '\n';
@@ -761,24 +761,47 @@
       body += 'Q6: What about the website specifically did you like or dislike?\n';
       body += 'Answer: ' + (textarea.value.trim() || 'No response') + '\n';
 
-      var subject = 'WEBSITE — Questionnaire Response';
-      var mailto = 'mailto:' + EMAIL_TO
-        + '?subject=' + encodeURIComponent(subject)
-        + '&body=' + encodeURIComponent(body);
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'SENDING...';
 
-      // Mark as submitted
-      localStorage.setItem(STORAGE_KEY, 'true');
-
-      // Open mail client
-      window.location.href = mailto;
-
-      // Show thank you
-      modal.innerHTML = '';
-      modal.appendChild(closeBtn);
-      var thanks = document.createElement('p');
-      thanks.className = 'q-submitted-msg';
-      thanks.textContent = 'Thank you for your feedback!';
-      modal.appendChild(thanks);
+      // Submit via FormSubmit.co — no sign-up needed, sends to your email
+      fetch('https://formsubmit.co/ajax/' + EMAIL_TO, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          _subject: 'WEBSITE — Questionnaire Response',
+          message: body
+        })
+      })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Submission failed');
+        // Mark as submitted
+        localStorage.setItem(STORAGE_KEY, 'true');
+        // Show thank you
+        modal.innerHTML = '';
+        modal.appendChild(closeBtn);
+        var thanks = document.createElement('p');
+        thanks.className = 'q-submitted-msg';
+        thanks.textContent = 'Thank you for your feedback!';
+        modal.appendChild(thanks);
+      })
+      .catch(function () {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'SEND';
+        var errMsg = modal.querySelector('.q-error-msg');
+        if (!errMsg) {
+          errMsg = document.createElement('p');
+          errMsg.className = 'q-error-msg';
+          errMsg.style.color = '#BF532C';
+          errMsg.style.fontSize = '13px';
+          errMsg.style.marginTop = '8px';
+          modal.appendChild(errMsg);
+        }
+        errMsg.textContent = 'Something went wrong. Please try again.';
+      });
     });
   }
 
