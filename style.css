@@ -325,11 +325,12 @@ h3 {
 
 .bubble-a .home-tagline {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 0.85vw;
+  font-size: 0.8vw;
   font-weight: 300;
   color: var(--warm-white);
   line-height: 1.6;
   text-align: left;
+  margin-top: 2vw;
 }
 
 .bubble-a:hover {
