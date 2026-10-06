@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Journey – Carl Engstler</title>
+  <meta name="description" content="Project journey: step by step through the project.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="brand" href="./">Carl Engstler</a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="./" aria-current="page">Project Journey</a>
+      <a href="#" title="Coming soon">About</a>
+    </nav>
+  </header>
+
+  <main class="journey">
+    <!-- Left: text + images for the selected step (filled by script.js) -->
+    <section class="content" id="content" aria-live="polite" tabindex="-1"></section>
+
+    <!-- Right: one bar per step, step 1 at the bottom (filled by script.js) -->
+    <nav class="steps-panel" aria-label="Project steps">
+      <ol class="bars" id="bars"></ol>
+    </nav>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

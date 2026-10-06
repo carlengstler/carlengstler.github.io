@@ -1,0 +1,14 @@
+# ArchiCAD files
+*.pln
+*.pln.lck
+*.lck
+*.bpn
+*.tpl
+
+# Screenshots
+Screenshot*.png
+
+# OS clutter
+Thumbs.db
+Desktop.ini
+.DS_Store
