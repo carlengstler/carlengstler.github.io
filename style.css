@@ -6,12 +6,31 @@
   --c-accent: #e45a1e;        /* orange: pie chart, bars, title dot */
   --c-accent-soft: #f08a5a;
   --c-white: #ffffff;
-  --c-page: #2a2a2a;          /* behind the card: same as its outline */
-  --c-frame: #2a2a2a;         /* card outline */
-  --c-cell: #f1f1f0;
+  --c-page: #f2dccd;          /* peach base under the orange fog */
+  --c-frame: #2a2a2a;         /* focus outlines */
   --c-ink: #2f2f2f;
-  --c-grey: #6f6f6f;
-  --c-track: #dcdcda;
+  --c-grey: #6a5a52;
+  --c-track: rgba(255, 255, 255, 0.6);
+
+  /* orange fog, used behind both halves; static gradients, nothing to repaint */
+  --fog-base: linear-gradient(180deg, #f7ebe2, #f2dccd);
+
+  /* translucent glass with one soft rim (bars, strip and the cards on the left).
+     Light from the top left: rim lit top/left outside, bottom/right inside. */
+  --glass-rim-color:
+    rgba(255, 255, 255, 0.85)
+    rgba(255, 255, 255, 0.4)
+    rgba(255, 255, 255, 0.28)
+    rgba(255, 255, 255, 0.7);
+  --glass-rim:
+    inset 0 0 1.5px 1.5px rgba(255, 255, 255, 0.26),      /* rim body, slightly blurred */
+    inset 0 2.5px 3px -1px rgba(255, 255, 255, 0.7),      /* light on the top of the rim */
+    inset -2.5px -2.5px 4px -2px rgba(255, 255, 255, 0.62), /* inner side: bright bottom/right */
+    inset 2.5px 2.5px 4px -2px rgba(150, 55, 15, 0.09),   /* inner side: shaded top/left */
+    inset 0 3px 5px -2px rgba(110, 35, 0, 0.11),          /* rim's soft shadow onto the glass */
+    0 0 0 1px rgba(255, 255, 255, 0.16),                  /* outer softening halo */
+    0 1px 2.5px rgba(110, 35, 0, 0.24);                   /* soft contact shadow */
+  --glass-drop: 0 14px 26px -14px rgba(110, 35, 0, 0.4);
 
   --f-head: "Archivo Black", "Arial Black", sans-serif;
   --f-body: "Jost", "Futura", "Century Gothic", sans-serif;
@@ -100,6 +119,21 @@ button { font: inherit; color: inherit; }
   display: grid;
   grid-template-columns: var(--split) 1fr;
   min-height: 0;
+  /* one continuous orange fog behind both halves (the left cards and the
+     right bars both look through it). Static gradients, nothing to repaint. */
+  background:
+    /* behind the bars (right) */
+    radial-gradient(24% 42% at 80% 52%, rgba(228, 90, 30, 0.75), transparent 75%),
+    radial-gradient(20% 28% at 70% 78%, rgba(240, 120, 60, 0.55), transparent 72%),
+    radial-gradient(20% 28% at 92% 22%, rgba(240, 138, 90, 0.55), transparent 72%),
+    /* behind the card (left) */
+    radial-gradient(30% 40% at 24% 42%, rgba(228, 90, 30, 0.55), transparent 72%),
+    radial-gradient(25% 35% at 45% 76%, rgba(240, 120, 60, 0.5), transparent 72%),
+    radial-gradient(28% 30% at 10% 86%, rgba(250, 190, 150, 0.55), transparent 75%),
+    radial-gradient(25% 30% at 50% 16%, rgba(240, 138, 90, 0.4), transparent 72%),
+    /* soft bridge across the middle so nothing lines up with the split */
+    radial-gradient(30% 50% at 61% 50%, rgba(240, 130, 75, 0.35), transparent 75%),
+    var(--fog-base);
 }
 
 /* ---------------------------------------------------------------------------
@@ -116,13 +150,10 @@ button { font: inherit; color: inherit; }
 .card {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  gap: 6px;
+  gap: 14px;
   width: 100%;
   max-width: 860px;
   height: 100%;
-  padding: 6px;
-  background: var(--c-frame);
-  border-radius: 24px;
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
@@ -131,23 +162,28 @@ button { font: inherit; color: inherit; }
 .card-top {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 6px;
+  gap: 14px;
 }
 
 .card-bottom {
   display: grid;
   grid-template-columns: 32% 1fr;
-  gap: 6px;
+  gap: 14px;
   min-height: 0;
 }
 
-.cell { background: var(--c-cell); border-radius: 6px; min-height: 0; }
-
-/* outer corners follow the card's rounding */
-.cell--title  { border-top-left-radius: 18px; }
-.cell--chart  { border-top-right-radius: 18px; }
-.cell--images { border-bottom-left-radius: 18px; }
-.cell--text   { border-bottom-right-radius: 18px; }
+/* each box is a pane of the same glass as the bars, a bit milkier for reading */
+.cell {
+  min-height: 0;
+  border: 1px solid;
+  border-color: var(--glass-rim-color);
+  border-radius: 18px;
+  background:
+    linear-gradient(115deg, transparent 28%, rgba(255, 255, 255, 0.12) 42%, transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.28) 100%),
+    radial-gradient(80% 120% at 50% 45%, rgba(255, 255, 255, 0.12) 35%, rgba(255, 255, 255, 0.38) 100%);
+  box-shadow: var(--glass-rim), var(--glass-drop);
+}
 
 /* title */
 .cell--title {
@@ -192,7 +228,6 @@ button { font: inherit; color: inherit; }
   aspect-ratio: 1;
   height: 100%;
   min-width: 120px;
-  background: linear-gradient(145deg, #f7f7f6, #e4e4e2);
 }
 
 .pie {
@@ -200,7 +235,7 @@ button { font: inherit; color: inherit; }
   aspect-ratio: 1;
   border-radius: 50%;
   background: conic-gradient(var(--c-accent) 0 calc(var(--value) * 1%), var(--c-track) 0);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 1px 2px rgba(110, 35, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5);
 }
 
 .pie-label {
@@ -218,7 +253,6 @@ button { font: inherit; color: inherit; }
   flex-direction: column;
   gap: 6px;
   padding: 6px;
-  background: var(--c-white);
   overflow-y: auto;
   scrollbar-width: thin;
 }
@@ -288,12 +322,6 @@ button { font: inherit; color: inherit; }
   justify-content: center;
   overflow-y: auto;
   padding: clamp(16px, 5vh, 48px) 11%;
-  /* orange fog right behind the bars; static gradients, so nothing to repaint */
-  background:
-    radial-gradient(48% 42% at 50% 52%, rgba(228, 90, 30, 0.5), transparent 72%),
-    radial-gradient(40% 28% at 28% 72%, rgba(240, 138, 90, 0.45), transparent 70%),
-    radial-gradient(40% 28% at 74% 28%, rgba(240, 138, 90, 0.4), transparent 70%),
-    #f6f3f0;
   scrollbar-width: none;
 }
 
@@ -308,46 +336,69 @@ button { font: inherit; color: inherit; }
   list-style: none;
 }
 
-/* frosted glass: light grain + white sheen over a see-through orange,
-   so the fog behind shows through */
+/* frosted glass slab: a milky veil that is thicker at the edges, so the fog
+   behind gives the colour. One soft rim (see --glass-rim). All static. */
 .bar {
   position: relative;
   display: block;
   width: 100%;
   height: clamp(44px, 7.5vh, 68px);
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.75);
+  border: 1px solid;
+  border-color: var(--glass-rim-color);
   border-radius: 18px;
   background:
-    var(--grain, none),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.06) 60%),
-    rgba(228, 90, 30, 0.7);
+    /* faint diagonal reflection */
+    linear-gradient(115deg, transparent 28%, rgba(255, 255, 255, 0.14) 42%, transparent 58%),
+    /* sheen at the top, light exiting at the bottom */
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.16) 100%),
+    /* diffusion: clearer centre, milkier edges */
+    radial-gradient(75% 130% at 50% 45%, rgba(255, 255, 255, 0.06) 35%, rgba(255, 255, 255, 0.34) 100%);
   box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.85),
-    inset 0 -6px 14px rgba(255, 255, 255, 0.2),
-    0 10px 24px -14px rgba(150, 50, 10, 0.45);
+    var(--glass-rim),
+    0 2px 0 rgba(255, 255, 255, 0.35),             /* slab underside */
+    var(--glass-drop);
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
-/* white square rising from the bottom edge; fills the bar's height on hover / select */
+/* inner sheen and the light gathering at the inner bottom edge */
+.bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 17px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 45%);
+  box-shadow: inset 0 -5px 7px -3px rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+/* glossy white square rising from the bottom edge; fills the bar's height on hover / select */
 .bar::after {
   content: "";
   position: absolute;
+  z-index: 1;
   left: var(--notch);
   bottom: 0;
   width: 9%;
   height: 62%;
-  border-radius: 6px 6px 0 0;
-  background: var(--c-white);
-  box-shadow: 0 -2px 8px rgba(120, 40, 0, 0.12);
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f6f3f1 70%, #ece7e3 100%);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 1px 0 0 rgba(255, 255, 255, 0.9),
+    inset -1px 0 0 rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 -1px 8px rgba(120, 40, 0, 0.22);
   transform-origin: bottom;
   transition: transform 0.25s ease;
 }
 
 .bar:not(:disabled):hover,
 .bar:focus-visible { transform: translateY(-2px); }
+
+.bar:not(:disabled):active { transform: translateY(1px); }
 
 .bar:not(:disabled):hover::after,
 .bar:focus-visible::after,
@@ -357,17 +408,20 @@ button { font: inherit; color: inherit; }
 
 .bar:disabled { cursor: default; opacity: 0.72; }
 
-/* frosted strip that opens under the selected bar */
+/* frosted strip that opens under the selected bar, same glass edges */
 .bar-panel {
   display: grid;
   grid-template-rows: 0fr;
   margin-top: 0;
+  border: 1px solid;
+  border-color: var(--glass-rim-color);
   border-radius: 18px;
   background:
-    var(--grain, none),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.5));
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85);
-  transition: grid-template-rows 0.35s ease, margin-top 0.35s ease;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.18) 60%, rgba(255, 255, 255, 0.28)),
+    radial-gradient(80% 120% at 50% 45%, rgba(255, 255, 255, 0.2) 40%, rgba(255, 255, 255, 0.45) 100%);
+  box-shadow: var(--glass-rim), var(--glass-drop);
+  opacity: 0; /* closed strips are fully hidden, edges included */
+  transition: grid-template-rows 0.35s ease, margin-top 0.35s ease, opacity 0.2s ease;
 }
 
 .bar-panel > div { overflow: hidden; }
@@ -395,7 +449,7 @@ button { font: inherit; color: inherit; }
   color: #5d4a40;
 }
 
-.bar-item.is-selected .bar-panel { grid-template-rows: 1fr; margin-top: 8px; }
+.bar-item.is-selected .bar-panel { grid-template-rows: 1fr; margin-top: 8px; opacity: 1; }
 .bar-item.is-selected .bar-info { opacity: 1; transform: none; transition-delay: 0.12s; }
 
 /* ---------------------------------------------------------------------------
@@ -410,7 +464,16 @@ button { font: inherit; color: inherit; }
   .brand { font-size: 16px; }
   .site-nav a { font-size: 12px; letter-spacing: 0.12em; }
 
-  .journey { display: flex; flex-direction: column; }
+  .journey {
+    display: flex;
+    flex-direction: column;
+    background:
+      radial-gradient(70% 22% at 50% 18%, rgba(228, 90, 30, 0.7), transparent 75%),
+      radial-gradient(60% 18% at 30% 45%, rgba(240, 120, 60, 0.5), transparent 72%),
+      radial-gradient(70% 20% at 60% 70%, rgba(228, 90, 30, 0.5), transparent 72%),
+      radial-gradient(60% 15% at 35% 92%, rgba(250, 190, 150, 0.55), transparent 75%),
+      var(--fog-base);
+  }
 
   .steps-panel { order: -1; padding: 32px 16px; overflow: visible; }
   .bars { gap: 18px; }
@@ -419,8 +482,8 @@ button { font: inherit; color: inherit; }
   .card { height: auto; }
   .cell--chart { height: auto; width: 110px; min-width: 0; }
   .card-bottom { grid-template-columns: 1fr; }
-  .cell--images { min-height: 200px; border-bottom-left-radius: 6px; }
-  .cell--text { border-bottom-left-radius: 18px; overflow: visible; }
+  .cell--images { min-height: 200px; }
+  .cell--text { overflow: visible; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -169,22 +169,5 @@ function buildBars() {
   });
 }
 
-// Light grey grain for the frosted bars: painted once into a small tile.
-function makeGrain() {
-  const size = 128;
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = size;
-  const ctx = canvas.getContext("2d");
-  const img = ctx.createImageData(size, size);
-  for (let i = 0; i < img.data.length; i += 4) {
-    const v = 190 + Math.random() * 65;
-    img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
-    img.data[i + 3] = Math.random() * 70;
-  }
-  ctx.putImageData(img, 0, 0);
-  document.documentElement.style.setProperty("--grain", `url(${canvas.toDataURL()})`);
-}
-
-makeGrain();
 buildBars();
 renderContent(null);
